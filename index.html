@@ -168,10 +168,10 @@
         // Lógica para determinar as recomendações com base nas respostas
         if (respostas.tipoVenda === 'fixo') {
             if (respostas.prioridadeTaxa === 'sim') {
-                recommendations.push("Considerando a prioridade por taxas baixas para vendas fixas: **InfinitePay Smart/Link**, **Ton (planos com menores taxas iniciais)**.");
+                recommendations.push("Considerando a prioridade por taxas baixas para vendas fixas: **<a href='https://infinitepay.io/taxas' target='_blank'>InfinitePay Smart/Link</a>**, **<a href='https://www.ton.com.br/planos-e-taxas' target='_blank'>Ton (planos com menores taxas iniciais)</a>**.");
             } else {
                 if (respostas.comprovanteFisico === 'sim') {
-                    recommendations.push("Para vendas fixas com necessidade de comprovante físico: **Cielo Zip**, **GetNet Mini TEF**, **Rede Mais**.");
+                    recommendations.push("Para vendas fixas com necessidade de comprovante físico: **<a href='https://www.cielo.com.br/maquininhas-de-cartao/cielo-zip/' target='_blank'>Cielo Zip</a>**, **<a href='https://site.getnet.com.br/maquininha/get-mini/' target='_blank'>GetNet Mini TEF</a>**, **<a href='https://www.userede.com.br/n/maquininha-rede-mais#maquininha-de-cartao' target='_blank'>Rede Mais</a>**.");
                 } else {
                     recommendations.push("Para vendas fixas com bom equilíbrio: **SumUp Top/Super**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**.");
                 }
