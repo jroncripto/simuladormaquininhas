@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encontre sua Maquininha Ideal</title>
+    <style>
+        body { font-family: sans-serif; }
+        .question { margin-bottom: 20px; }
+        .results { margin-top: 30px; border: 1px solid #ccc; padding: 15px; }
+        .recommendation { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Encontre a Maquininha Ideal para seu Negócio</h1>
+
+    <div id="quiz-container">
+        </div>
+
+    <button id="submit-button" disabled>Ver Resultados</button>
+
+    <div id="results-container" class="results" style="display: none;">
+        <h2>Recomendações:</h2>
+        <div id="recommendations">
+            </div>
+    </div>
+
+    <script>
+        // Código JavaScript será inserido aqui
+	document.addEventListener('DOMContentLoaded', function() {
+    const quizContainer = document.getElementById('quiz-container');
+    const submitButton = document.getElementById('submit-button');
+    const resultsContainer = document.getElementById('results-container');
+    const recommendationsDiv = document.getElementById('recommendations');
+    const respostas = {};
+    let currentQuestionIndex = 0;
+
+    const questions = [
+        {
+            question: "Qual é o principal tipo de venda do seu negócio?",
+            name: "tipoVenda",
+            type: "radio",
+            options: [
+                { label: "Principalmente vendas presenciais em um local fixo.", value: "fixo" },
+                { label: "Principalmente vendas presenciais com necessidade de mobilidade.", value: "movel" },
+                { label: "Principalmente vendas online com alguma necessidade de vendas presenciais.", value: "online_presencial" },
+                { label: "Principalmente vendas online sem necessidade de maquininha física.", value: "online_apenas" }
+            ]
+        },
+        {
+            question: "Qual o seu volume médio mensal de vendas (aproximado)?",
+            name: "volumeVendas",
+            type: "radio",
+            options: [
+                { label: "Baixo volume (até R$ 5.000).", value: "baixo" },
+                { label: "Médio volume (R$ 5.001 a R$ 20.000).", value: "medio" },
+                { label: "Alto volume (acima de R$ 20.000).", value: "alto" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["fixo", "movel", "online_presencial"] }
+        },
+        {
+            question: "A taxa é o fator mais importante para você?",
+            name: "prioridadeTaxa",
+            type: "radio",
+            options: [
+                { label: "Sim, a menor taxa é crucial.", value: "sim" },
+                { label: "Não necessariamente, prefiro um bom equilíbrio.", value: "nao" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["fixo", "movel", "online_presencial"] }
+        },
+        {
+            question: "Você precisa de uma maquininha com comprovante de pagamento físico?",
+            name: "comprovanteFisico",
+            type: "radio",
+            options: [
+                { label: "Sim.", value: "sim" },
+                { label: "Não, comprovante digital é suficiente.", value: "nao" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["fixo", "online_presencial"] }
+        },
+        {
+            question: "Você precisa de uma maquininha totalmente independente do celular (com chip próprio)?",
+            name: "chipProprio",
+            type: "radio",
+            options: [
+                { label: "Sim.", value: "sim" },
+                { label: "Não, posso usar uma que conecta ao celular.", value: "nao" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["movel"] }
+        },
+        {
+            question: "A aceitação de vale-refeição e alimentação é essencial?",
+            name: "aceitaVale",
+            type: "radio",
+            options: [
+                { label: "Sim.", value: "sim" },
+                { label: "Não.", value: "nao" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["fixo", "movel", "online_presencial"] }
+        },
+        {
+            question: "A facilidade de integração com sua plataforma de e-commerce é importante?",
+            name: "integracaoEcommerce",
+            type: "radio",
+            options: [
+                { label: "Sim.", value: "sim" },
+                { label: "Não.", value: "nao" }
+            ],
+            dependsOn: { question: "tipoVenda", value: ["online_presencial", "online_apenas"] }
+        }
+        // Adicione mais perguntas conforme necessário
+    ];
+
+    function displayQuestion() {
+        const questionData = questions[currentQuestionIndex];
+        if (!questionData) {
+            submitButton.disabled = false;
+            return;
+        }
+
+        if (questionData.dependsOn) {
+            const dependencyAnswer = respostas[questionData.dependsOn.question];
+            if (!dependencyAnswer || !questionData.dependsOn.value.includes(dependencyAnswer)) {
+                currentQuestionIndex++;
+                displayQuestion();
+                return;
+            }
+        }
+
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        questionDiv.innerHTML = `<h3>${questionData.question}</h3>`;
+
+        questionData.options.forEach(option => {
+            const input = document.createElement('input');
+            input.type = questionData.type;
+            input.name = questionData.name;
+            input.value = option.value;
+            input.id = `${questionData.name}-${option.value}`;
+            input.addEventListener('change', () => {
+                respostas[questionData.name] = option.value;
+                currentQuestionIndex++;
+                quizContainer.innerHTML = ''; // Limpa a pergunta anterior
+                displayQuestion();
+            });
+
+            const label = document.createElement('label');
+            label.textContent = option.label;
+            label.setAttribute('for', `${questionData.name}-${option.value}`);
+
+            questionDiv.appendChild(input);
+            questionDiv.appendChild(label);
+            questionDiv.appendChild(document.createElement('br'));
+        });
+
+        quizContainer.appendChild(questionDiv);
+        submitButton.disabled = true; // Desabilita até a última pergunta ser respondida (ou não haver mais perguntas dependentes)
+        if (currentQuestionIndex === questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length) {
+            submitButton.disabled = false;
+        }
+    }
+
+    submitButton.addEventListener('click', showResults);
+
+    function showResults() {
+        let recommendations = [];
+
+        // Lógica para determinar as recomendações com base nas respostas
+        if (respostas.tipoVenda === 'fixo') {
+            if (respostas.prioridadeTaxa === 'sim') {
+                recommendations.push("Considerando a prioridade por taxas baixas para vendas fixas: **InfinitePay Smart/Link**, **Ton (planos com menores taxas iniciais)**.");
+            } else {
+                if (respostas.comprovanteFisico === 'sim') {
+                    recommendations.push("Para vendas fixas com necessidade de comprovante físico: **Cielo Zip**, **GetNet Mini TEF**, **Rede Mais**.");
+                } else {
+                    recommendations.push("Para vendas fixas com bom equilíbrio: **SumUp Top/Super**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**.");
+                }
+            }
+        } else if (respostas.tipoVenda === 'movel') {
+            if (respostas.chipProprio === 'sim') {
+                recommendations.push("Para mobilidade com chip próprio: **InfinitePay Smart**, **Ton T3**, **SumUp Top**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**.");
+                if (respostas.aceitaVale === 'sim') {
+                    recommendations.push("Para aceitar vale-refeição e alimentação com chip próprio: **Cielo LIO One**, **GetNet Smart** (verificar credenciamento).");
+                }
+            } else {
+                recommendations.push("Para mobilidade conectando ao celular: **InfinitePay Link**, **Ton T1**, **SumUp Solo**, **PagBank Minizinha NFC**, **Mercado Pago Point Mini**.");
+            }
+        } else if (respostas.tipoVenda === 'online_presencial') {
+            recommendations.push("Para vendas online e presenciais: Considere plataformas com boas opções de **link de pagamento** (todas as principais oferecem) e uma maquininha física com bom custo-benefício como **InfinitePay Link/Smart**, **Ton T1/T2**, **SumUp Solo/Top**, **PagBank Minizinha/Moderninha**, **Mercado Pago Point**.");
+            if (respostas.integracaoEcommerce === 'sim') {
+                recommendations.push("Para integração com e-commerce: **Mercado Pago**, **PagBank**, **InfinitePay**, **SumUp** geralmente oferecem boas APIs e plugins.");
+            }
+        } else if (respostas.tipoVenda === 'online_apenas') {
+            recommendations.push("Para vendas online: Priorize plataformas com **link de pagamento**, **checkout transparente** e boas **APIs/plugins** como **InfinitePay**, **Ton**, **SumUp**, **PagBank**, **Mercado Pago**. Compare as taxas específicas para online.");
+            if (respostas.integracaoEcommerce === 'sim') {
+                recommendations.push("Para integração com e-commerce: **Mercado Pago**, **PagBank**, **InfinitePay**, **SumUp** são boas opções.");
+            }
+        }
+
+        if (respostas.aceitaVale === 'sim' && respostas.tipoVenda !== 'movel') {
+            recommendations.push("Para aceitar vale-refeição e alimentação em vendas fixas/online_presenciais: **Cielo**, **GetNet** (verificar credenciamento e modelos compatíveis).");
+        }
+
+        recommendationsDiv.innerHTML = '';
+        if (recommendations.length > 0) {
+            recommendations.forEach(rec => {
+                const p = document.createElement('p');
+                p.innerHTML = rec;
+                recommendationsDiv.appendChild(p);
+            });
+        } else {
+            recommendationsDiv.innerHTML = "<p>Nenhuma recomendação específica com base nas suas respostas.</p>";
+        }
+
+        quizContainer.style.display = 'none';
+        submitButton.style.display = 'none';
+        resultsContainer.style.display = 'block';
+    }
+
+    displayQuestion(); // Inicia a exibição das perguntas
+});
+	
+	
+    </script>
+</body>
+</html>
