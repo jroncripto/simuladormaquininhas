@@ -171,27 +171,27 @@
                 recommendations.push("Considerando a prioridade por taxas baixas para vendas fixas: **<a href='https://infinitepay.io/taxas' target='_blank'>InfinitePay Smart/Link</a>**, **<a href='https://www.ton.com.br/planos-e-taxas' target='_blank'>Ton (planos com menores taxas iniciais)</a>**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
             } else {
                 if (respostas.comprovanteFisico === 'sim') {
-                    recommendations.push("Para vendas fixas com necessidade de comprovante físico: **<a href='https://www.cielo.com.br/maquininhas-de-cartao/cielo-zip/' target='_blank'>Cielo Zip</a>**, **<a href='https://site.getnet.com.br/maquininha/get-mini/' target='_blank'>GetNet Mini TEF</a>**, **<a href='https://www.userede.com.br/n/maquininha-rede-mais#maquininha-de-cartao' target='_blank'>Rede Mais</a>**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+                    recommendations.push("Para vendas fixas com necessidade de comprovante físico: **<a href='https://www.cielo.com.br/maquininhas-de-cartao/cielo-zip/' target='_blank'>Cielo Zip</a>**, **<a href='https://site.getnet.com.br/maquininha/get-mini/' target='_blank'>GetNet Mini TEF</a>**, **<a href='https://www.userede.com.br/n/maquininha-rede-mais#maquininha-de-cartao' target='_blank'>Rede Mais</a>**. ");
                 } else {
-                    recommendations.push("Para vendas fixas com bom equilíbrio: **SumUp Top/Super**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+                    recommendations.push("Para vendas fixas com bom equilíbrio: **SumUp Top/Super**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**.");
                 }
             }
         } else if (respostas.tipoVenda === 'movel') {
             if (respostas.chipProprio === 'sim') {
-                recommendations.push("Para mobilidade com chip próprio: **InfinitePay Smart**, **Ton T3**, **SumUp Top**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+                recommendations.push("Para mobilidade com chip próprio: **InfinitePay Smart**, **Ton T3**, **SumUp Top**, **PagBank Moderninha Plus 2**, **Mercado Pago Point Smart**.");
                 if (respostas.aceitaVale === 'sim') {
-                    recommendations.push("Para aceitar vale-refeição e alimentação com chip próprio: **Cielo LIO One**, **GetNet Smart** (verificar credenciamento). <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+                    recommendations.push("Para aceitar vale-refeição e alimentação com chip próprio: **Cielo LIO One**, **GetNet Smart** (verificar credenciamento).");
                 }
             } else {
-                recommendations.push("Para mobilidade conectando ao celular: **InfinitePay Link**, **Ton T1**, **SumUp Solo**, **PagBank Minizinha NFC**, **Mercado Pago Point Mini**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+                recommendations.push("Para mobilidade conectando ao celular: **InfinitePay Link**, **Ton T1**, **SumUp Solo**, **PagBank Minizinha NFC**, **Mercado Pago Point Mini**.");
             }
         } else if (respostas.tipoVenda === 'online_presencial') {
-            recommendations.push("Para vendas online e presenciais: Considere plataformas com boas opções de **link de pagamento** (todas as principais oferecem) e uma maquininha física com bom custo-benefício como **InfinitePay Link/Smart**, **Ton T1/T2**, **SumUp Solo/Top**, **PagBank Minizinha/Moderninha**, **Mercado Pago Point**. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+            recommendations.push("Para vendas online e presenciais: Considere plataformas com boas opções de **link de pagamento** (todas as principais oferecem) e uma maquininha física com bom custo-benefício como **InfinitePay Link/Smart**, **Ton T1/T2**, **SumUp Solo/Top**, **PagBank Minizinha/Moderninha**, **Mercado Pago Point**. ");
             if (respostas.integracaoEcommerce === 'sim') {
                 recommendations.push("Para integração com e-commerce: **Mercado Pago**, **PagBank**, **InfinitePay**, **SumUp** geralmente oferecem boas APIs e plugins.");
             }
         } else if (respostas.tipoVenda === 'online_apenas') {
-            recommendations.push("Para vendas online: Priorize plataformas com **link de pagamento**, **checkout transparente** e boas **APIs/plugins** como **InfinitePay**, **Ton**, **SumUp**, **PagBank**, **Mercado Pago**. Compare as taxas específicas para online. <p><a href="https://jroncripto.github.io/simuladormaquininhas/" id="restart-quiz">Refazer a simulação!</a></p>");
+            recommendations.push("Para vendas online: Priorize plataformas com **link de pagamento**, **checkout transparente** e boas **APIs/plugins** como **InfinitePay**, **Ton**, **SumUp**, **PagBank**, **Mercado Pago**. Compare as taxas específicas para online. ");
             if (respostas.integracaoEcommerce === 'sim') {
                 recommendations.push("Para integração com e-commerce: **Mercado Pago**, **PagBank**, **InfinitePay**, **SumUp** são boas opções.");
             }
