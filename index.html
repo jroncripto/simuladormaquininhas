@@ -32,27 +32,31 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-        .question {
+        .question-container {
+            display: none; /* Esconde todas as perguntas inicialmente */
+        }
+        .question-container.active {
+            display: block; /* Exibe a pergunta ativa */
             margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        .question:last-child {
+        .question-container.active:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
-        .question h3 {
+        .question-container h3 {
             font-size: 1.3em;
             margin-top: 0;
             margin-bottom: 15px;
             color: #333;
         }
-        .question input[type="radio"] {
+        .question-container input[type="radio"] {
             margin-right: 8px;
             vertical-align: middle;
         }
-        .question label {
+        .question-container label {
             display: block;
             margin-bottom: 10px;
             color: #555;
@@ -70,6 +74,7 @@
             font-size: 1.1em;
             transition: background-color 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px; /* Adiciona margem acima do botão */
         }
         button:hover {
             background-color: #0056b3;
@@ -148,6 +153,7 @@
     const recommendationsDiv = document.getElementById('recommendations');
     const respostas = {};
     let currentQuestionIndex = 0;
+    let questionElements = [];
 
     const questions = [
         {
@@ -225,22 +231,9 @@
         // Adicione mais perguntas conforme necessário
     ];
 
-    function displayQuestion() {
-        const questionData = questions[currentQuestionIndex];
-        if (!questionData) {
-            submitButton.disabled = false;
-            return;
-        }
-
-        if (questionData.dependsOn) {
-            const dependencyAnswer = respostas[questionData.dependsOn.question];
-            if (!dependencyAnswer || !questionData.dependsOn.value.includes(dependencyAnswer)) {
-                currentQuestionIndex++;
-                displayQuestion();
-                return;
-            }
-        }
-
+    function createQuestionElement(questionData) {
+        const questionContainer = document.createElement('div');
+        questionContainer.classList.add('question-container');
         const questionDiv = document.createElement('div');
         questionDiv.classList.add('question');
         questionDiv.innerHTML = `<h3>${questionData.question}</h3>`;
@@ -250,26 +243,50 @@
             input.type = questionData.type;
             input.name = questionData.name;
             input.value = option.value;
-            input.id = `${questionData.name}-${option.value}`;
+            input.id = `<span class="math-inline">\{questionData\.name\}\-</span>{option.value}`;
             input.addEventListener('change', () => {
                 respostas[questionData.name] = option.value;
-                currentQuestionIndex++;
-                quizContainer.innerHTML = ''; // Limpa a pergunta anterior
-                displayQuestion();
+                showNextQuestion();
             });
 
             const label = document.createElement('label');
             label.textContent = option.label;
-            label.setAttribute('for', `${questionData.name}-${option.value}`);
+            label.setAttribute('for', `<span class="math-inline">\{questionData\.name\}\-</span>{option.value}`);
 
             questionDiv.appendChild(input);
             questionDiv.appendChild(label);
             questionDiv.appendChild(document.createElement('br'));
         });
 
-        quizContainer.appendChild(questionDiv);
-        submitButton.disabled = true; // Desabilita até a última pergunta ser respondida (ou não haver mais perguntas dependentes)
-        if (currentQuestionIndex === questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length) {
+        questionContainer.appendChild(questionDiv);
+        return questionContainer;
+    }
+
+    function displayQuestions() {
+        questions.forEach(questionData => {
+            const questionElement = createQuestionElement(questionData);
+            quizContainer.appendChild(questionElement);
+            questionElements.push(questionElement);
+        });
+        showCurrentQuestion();
+    }
+
+    function showCurrentQuestion() {
+        questionElements.forEach((element, index) => {
+            const questionData = questions[index];
+            if (index === currentQuestionIndex && (!questionData.dependsOn || (respostas[questionData.dependsOn.question] && questionData.dependsOn.value.includes(respostas[questionData.dependsOn.question])))) {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        });
+        submitButton.disabled = currentQuestionIndex < questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length;
+    }
+
+    function showNextQuestion() {
+        currentQuestionIndex++;
+        showCurrentQuestion();
+        if (currentQuestionIndex >= questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length) {
             submitButton.disabled = false;
         }
     }
@@ -324,20 +341,4 @@
                 recommendationsDiv.appendChild(p);
             });
         } else {
-            recommendationsDiv.innerHTML = "<p>Nenhuma recomendação específica com base nas suas respostas.</p>";
-        }
-
-        quizContainer.style.display = 'none';
-        submitButton.style.display = 'none';
-        resultsContainer.style.display = 'block';
-
-    }
-
-    displayQuestion(); // Inicia a exibição das perguntas
-});
-
-
-    </script>
-    <p><a href='https://jroncripto.github.io/simuladormaquininhas/' id='restart-quiz' style="display: none;">Iniciar</a></p>
-</body>
-</html>
+            recommendationsDiv.innerHTML = "<p>Nenhuma recomendação
