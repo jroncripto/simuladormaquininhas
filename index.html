@@ -5,148 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encontre sua Maquininha Ideal</title>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #007bff;
-        }
-        p {
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #555;
-        }
-        strong {
-            color: #007bff;
-        }
-        #quiz-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .question-container {
-            display: none;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        .question-container.active {
-            display: block;
-        }
-        .question-container h3 {
-            font-size: 1.1em;
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .question-container input[type="radio"] {
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-        .question-container label {
-            display: inline-block;
-            margin-bottom: 8px;
-            color: #555;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #results-container {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            display: none;
-        }
-        #results-container h2 {
-            font-size: 1.3em;
-            margin-top: 0;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #28a745;
-        }
-        #recommendations {
-            color: #495057;
-            line-height: 1.7;
-        }
-        .recommendation {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-left: 3px solid #28a745;
-            border-radius: 3px;
-        }
-        .recommendation a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .recommendation a:hover {
-            text-decoration: underline;
-        }
-        #restart-quiz {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        #restart-quiz:hover {
-            text-decoration: underline;
-        }
+        body { font-family: sans-serif; }
+        .question { margin-bottom: 20px; }
+        .results { margin-top: 30px; border: 1px solid #ccc; padding: 15px; }
+        .recommendation { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>Encontre a Maquininha Ideal para seu Negócio</h1>
-    <p>Olá! O <strong>comparapay</strong> é uma ferramenta online que te ajuda a encontrar a melhor maquininha de cartão para seu negócio. Responda algumas perguntas rapidinho e tome a melhor decisão.</p>
+    <h1>Encontre a Maquininha Ideal para seu Negócio</h1>	
+    <p>Olá! O <STRONG>comparapay</STRONG> é uma ferramenta online que te ajuda a encontrar a melhor maquininha de cartão para seu negócio. Responda algumas perguntas rapidinho e tome a melhor decisão.</p>
     <div id="quiz-container">
-    </div>
+        </div>
 
     <button id="submit-button" disabled>Ver Resultados</button>
 
-    <div id="results-container" class="results">
+    <div id="results-container" class="results" style="display: none;">
         <h2>Recomendações:</h2>
         <div id="recommendations">
-        </div>
+            </div>	
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Código JavaScript será inserido aqui
+	document.addEventListener('DOMContentLoaded', function() {
     const quizContainer = document.getElementById('quiz-container');
     const submitButton = document.getElementById('submit-button');
     const resultsContainer = document.getElementById('results-container');
     const recommendationsDiv = document.getElementById('recommendations');
     const respostas = {};
     let currentQuestionIndex = 0;
-    let questionElements = [];
 
     const questions = [
         {
@@ -224,10 +111,24 @@
         // Adicione mais perguntas conforme necessário
     ];
 
-    function createQuestionElement(questionData) {
-        const questionContainer = document.createElement('div');
-        questionContainer.classList.add('question-container');
+    function displayQuestion() {
+        const questionData = questions[currentQuestionIndex];
+        if (!questionData) {
+            submitButton.disabled = false;
+            return;
+        }
+
+        if (questionData.dependsOn) {
+            const dependencyAnswer = respostas[questionData.dependsOn.question];
+            if (!dependencyAnswer || !questionData.dependsOn.value.includes(dependencyAnswer)) {
+                currentQuestionIndex++;
+                displayQuestion();
+                return;
+            }
+        }
+
         const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
         questionDiv.innerHTML = `<h3>${questionData.question}</h3>`;
 
         questionData.options.forEach(option => {
@@ -236,56 +137,25 @@
             input.name = questionData.name;
             input.value = option.value;
             input.id = `${questionData.name}-${option.value}`;
-            input.style.marginRight = '5px';
-            input.style.verticalAlign = 'middle';
             input.addEventListener('change', () => {
                 respostas[questionData.name] = option.value;
-                showNextQuestion();
+                currentQuestionIndex++;
+                quizContainer.innerHTML = ''; // Limpa a pergunta anterior
+                displayQuestion();
             });
 
             const label = document.createElement('label');
             label.textContent = option.label;
             label.setAttribute('for', `${questionData.name}-${option.value}`);
-            label.style.display = 'inline-block';
-            label.style.marginBottom = '8px';
-            label.style.color = '#555';
-            label.style.cursor = 'pointer';
-            label.style.verticalAlign = 'middle';
 
             questionDiv.appendChild(input);
             questionDiv.appendChild(label);
             questionDiv.appendChild(document.createElement('br'));
         });
 
-        questionContainer.appendChild(questionDiv);
-        return questionContainer;
-    }
-
-    function displayQuestions() {
-        questions.forEach(questionData => {
-            const questionElement = createQuestionElement(questionData);
-            quizContainer.appendChild(questionElement);
-            questionElements.push(questionElement);
-        });
-        showCurrentQuestion();
-    }
-
-    function showCurrentQuestion() {
-        questionElements.forEach((element, index) => {
-            const questionData = questions[index];
-            if (index === currentQuestionIndex && (!questionData.dependsOn || (respostas[questionData.dependsOn.question] && questionData.dependsOn.value.includes(respostas[questionData.dependsOn.question])))) {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        });
-        submitButton.disabled = currentQuestionIndex < questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length;
-    }
-
-    function showNextQuestion() {
-        currentQuestionIndex++;
-        showCurrentQuestion();
-        if (currentQuestionIndex >= questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length) {
+        quizContainer.appendChild(questionDiv);
+        submitButton.disabled = true; // Desabilita até a última pergunta ser respondida (ou não haver mais perguntas dependentes)
+        if (currentQuestionIndex === questions.filter(q => !q.dependsOn || (respostas[q.dependsOn.question] && q.dependsOn.value.includes(respostas[q.dependsOn.question]))).length) {
             submitButton.disabled = false;
         }
     }
@@ -335,7 +205,6 @@
         if (recommendations.length > 0) {
             recommendations.forEach(rec => {
                 const p = document.createElement('p');
-                p.classList.add('recommendation');
                 p.innerHTML = rec;
                 recommendationsDiv.appendChild(p);
             });
@@ -346,12 +215,14 @@
         quizContainer.style.display = 'none';
         submitButton.style.display = 'none';
         resultsContainer.style.display = 'block';
-
+	
     }
 
-    displayQuestions();
+    displayQuestion(); // Inicia a exibição das perguntas
 });
+	
+	
     </script>
-    <p><a href='https://jroncripto.github.io/simuladormaquininhas/' id='restart-quiz'>Iniciar</a></p>
+	<p><a href='https://jroncripto.github.io/simuladormaquininhas/' id='restart-quiz'>Iniciar</a></p>
 </body>
 </html>
